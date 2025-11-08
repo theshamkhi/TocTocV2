@@ -3,12 +3,14 @@ package com.toctoc.toctoc2;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
 @EnableJpaAuditing
-public class TocToc2Application {
+@EnableTransactionManagement
+public class TocTocApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(TocToc2Application.class, args);
+        SpringApplication.run(TocTocApplication.class, args);
     }
 }

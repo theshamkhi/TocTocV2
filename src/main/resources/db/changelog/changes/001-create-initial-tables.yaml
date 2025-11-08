@@ -1,0 +1,473 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-zone-table
+      author: shamkhi
+      changes:
+        - createTable:
+            tableName: zone
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: nom
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: code_postal
+                  type: varchar(10)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ville
+                  type: varchar(100)
+              - column:
+                  name: date_creation
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: date_modification
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+
+  - changeSet:
+      id: 002-create-client-expediteur-table
+      author: shamkhi
+      changes:
+        - createTable:
+            tableName: client_expediteur
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: nom
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: prenom
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(150)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: telephone
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: adresse
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date_creation
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: date_modification
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+
+  - changeSet:
+      id: 003-create-destinataire-table
+      author: shamkhi
+      changes:
+        - createTable:
+            tableName: destinataire
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: nom
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: prenom
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(150)
+              - column:
+                  name: telephone
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: adresse
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date_creation
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: date_modification
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+
+  - changeSet:
+      id: 004-create-livreur-table
+      author: shamkhi
+      changes:
+        - createTable:
+            tableName: livreur
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: nom
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: prenom
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: telephone
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: vehicule
+                  type: varchar(100)
+              - column:
+                  name: actif
+                  type: boolean
+                  defaultValueBoolean: true
+              - column:
+                  name: zone_assignee_id
+                  type: varchar(36)
+              - column:
+                  name: date_creation
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: date_modification
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+
+  - changeSet:
+      id: 005-add-fk-livreur-zone
+      author: shamkhi
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: livreur
+            baseColumnNames: zone_assignee_id
+            referencedTableName: zone
+            referencedColumnNames: id
+            constraintName: fk_livreur_zone
+            onDelete: SET NULL
+
+  - changeSet:
+      id: 006-create-produit-table
+      author: shamkhi
+      changes:
+        - createTable:
+            tableName: produit
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: nom
+                  type: varchar(200)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: categorie
+                  type: varchar(100)
+              - column:
+                  name: poids
+                  type: decimal(10,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: prix
+                  type: decimal(10,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date_creation
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: date_modification
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+
+  - changeSet:
+      id: 007-create-colis-table
+      author: shamkhi
+      changes:
+        - createTable:
+            tableName: colis
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: description
+                  type: varchar(500)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: poids
+                  type: decimal(10,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: statut
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: priorite
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ville_destination
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date_limite_livraison
+                  type: timestamp
+              - column:
+                  name: date_collecte
+                  type: timestamp
+              - column:
+                  name: date_livraison
+                  type: timestamp
+              - column:
+                  name: livreur_id
+                  type: varchar(36)
+              - column:
+                  name: client_expediteur_id
+                  type: varchar(36)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: destinataire_id
+                  type: varchar(36)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: zone_id
+                  type: varchar(36)
+              - column:
+                  name: date_creation
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: date_modification
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+
+  - changeSet:
+      id: 008-add-fk-colis
+      author: shamkhi
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: colis
+            baseColumnNames: livreur_id
+            referencedTableName: livreur
+            referencedColumnNames: id
+            constraintName: fk_colis_livreur
+            onDelete: SET NULL
+        - addForeignKeyConstraint:
+            baseTableName: colis
+            baseColumnNames: client_expediteur_id
+            referencedTableName: client_expediteur
+            referencedColumnNames: id
+            constraintName: fk_colis_client_expediteur
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: colis
+            baseColumnNames: destinataire_id
+            referencedTableName: destinataire
+            referencedColumnNames: id
+            constraintName: fk_colis_destinataire
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: colis
+            baseColumnNames: zone_id
+            referencedTableName: zone
+            referencedColumnNames: id
+            constraintName: fk_colis_zone
+            onDelete: SET NULL
+
+  - changeSet:
+      id: 009-create-historique-livraison-table
+      author: shamkhi
+      changes:
+        - createTable:
+            tableName: historique_livraison
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: colis_id
+                  type: varchar(36)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: statut
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date_changement
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: commentaire
+                  type: varchar(500)
+              - column:
+                  name: modifie_par
+                  type: varchar(100)
+
+  - changeSet:
+      id: 010-add-fk-historique-livraison
+      author: shamkhi
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: historique_livraison
+            baseColumnNames: colis_id
+            referencedTableName: colis
+            referencedColumnNames: id
+            constraintName: fk_historique_colis
+            onDelete: CASCADE
+
+  - changeSet:
+      id: 011-create-colis-produit-table
+      author: shamkhi
+      changes:
+        - createTable:
+            tableName: colis_produit
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: colis_id
+                  type: varchar(36)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: produit_id
+                  type: varchar(36)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: quantite
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: prix
+                  type: decimal(10,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date_ajout
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+
+  - changeSet:
+      id: 012-add-fk-colis-produit
+      author: shamkhi
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: colis_produit
+            baseColumnNames: colis_id
+            referencedTableName: colis
+            referencedColumnNames: id
+            constraintName: fk_colis_produit_colis
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: colis_produit
+            baseColumnNames: produit_id
+            referencedTableName: produit
+            referencedColumnNames: id
+            constraintName: fk_colis_produit_produit
+            onDelete: CASCADE
+
+  - changeSet:
+      id: 013-add-indexes
+      author: shamkhi
+      changes:
+        - createIndex:
+            indexName: idx_colis_statut
+            tableName: colis
+            columns:
+              - column:
+                  name: statut
+        - createIndex:
+            indexName: idx_colis_priorite
+            tableName: colis
+            columns:
+              - column:
+                  name: priorite
+        - createIndex:
+            indexName: idx_colis_ville_destination
+            tableName: colis
+            columns:
+              - column:
+                  name: ville_destination
+        - createIndex:
+            indexName: idx_colis_date_creation
+            tableName: colis
+            columns:
+              - column:
+                  name: date_creation
+        - createIndex:
+            indexName: idx_historique_date_changement
+            tableName: historique_livraison
+            columns:
+              - column:
+                  name: date_changement
