@@ -3,7 +3,7 @@ spring:
     name: TocToc2
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/TocTocV2
+    url: jdbc:postgresql://localhost:5432/TocToc2
     username: postgres
     password: 123
     driver-class-name: org.postgresql.Driver

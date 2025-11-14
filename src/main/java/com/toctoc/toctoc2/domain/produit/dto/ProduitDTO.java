@@ -21,6 +21,7 @@ public class ProduitDTO {
     @Size(max = 150)
     private String nom;
 
+    @NotBlank(message = "La catégorie est obligatoire")
     @Size(max = 100)
     private String categorie;
 

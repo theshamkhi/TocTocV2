@@ -2,6 +2,7 @@ package com.toctoc.toctoc2.domain.client.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,6 +28,7 @@ public class ClientExpediteurDTO {
     @Email
     private String email;
 
+    @Pattern(regexp = "^(\\+212|0)[5-7][0-9]{8}$", message = "Le téléphone doit être un numéro marocain valide (ex: 0612345678)")
     @NotBlank(message = "Le téléphone est obligatoire")
     @Size(max = 20)
     private String telephone;

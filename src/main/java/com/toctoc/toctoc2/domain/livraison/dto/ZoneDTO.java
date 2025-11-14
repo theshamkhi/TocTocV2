@@ -22,6 +22,7 @@ public class ZoneDTO {
     @Size(max = 10)
     private String codePostal;
 
+    @NotBlank(message = "La ville est obligatoire")
     @Size(max = 100)
     private String ville;
 

@@ -33,8 +33,9 @@ public class Zone {
     @Column(name = "code_postal", nullable = false, length = 10)
     private String codePostal;
 
+    @NotBlank(message = "La ville est obligatoire")
     @Size(max = 100)
-    @Column(name = "ville", length = 100)
+    @Column(name = "ville", nullable = false, length = 100)
     private String ville;
 
     @Column(name = "date_creation", nullable = false, updatable = false)

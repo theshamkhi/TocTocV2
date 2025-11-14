@@ -3,6 +3,8 @@ package com.toctoc.toctoc2.domain.colis.service;
 import com.toctoc.toctoc2.application.mapper.ColisMapper;
 import com.toctoc.toctoc2.domain.colis.dto.*;
 import com.toctoc.toctoc2.domain.colis.model.*;
+import com.toctoc.toctoc2.domain.livraison.model.Zone;
+import com.toctoc.toctoc2.domain.client.model.*;
 import com.toctoc.toctoc2.domain.colis.repository.ColisRepository;
 import com.toctoc.toctoc2.domain.colis.repository.ColisProduitRepository;
 import com.toctoc.toctoc2.domain.colis.repository.HistoriqueLivraisonRepository;
@@ -15,6 +17,7 @@ import com.toctoc.toctoc2.infrastructure.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,23 +91,28 @@ public class ColisService {
     public ColisDTO createColis(CreateColisRequest request) {
         log.info("Création d'un nouveau colis");
 
+        ClientExpediteur client = clientRepository.findById(request.getClientExpediteurId())
+                .orElseThrow(() -> new ResourceNotFoundException("Client expéditeur non trouvé"));
+
+        Destinataire destinataire = destinataireRepository.findById(request.getDestinataireId())
+                .orElseThrow(() -> new ResourceNotFoundException("Destinataire non trouvé"));
+
+        Zone zone = null;
+        if (request.getZoneId() != null) {
+            zone = zoneRepository.findById(request.getZoneId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Zone non trouvée"));
+        }
+
         Colis colis = colisMapper.toEntity(request);
 
-        // Associer les relations
-        colis.setClientExpediteur(clientRepository.findById(request.getClientExpediteurId())
-                .orElseThrow(() -> new ResourceNotFoundException("Client expéditeur non trouvé")));
-
-        colis.setDestinataire(destinataireRepository.findById(request.getDestinataireId())
-                .orElseThrow(() -> new ResourceNotFoundException("Destinataire non trouvé")));
-
-        if (request.getZoneId() != null) {
-            colis.setZone(zoneRepository.findById(request.getZoneId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Zone non trouvée")));
+        colis.setClientExpediteur(client);
+        colis.setDestinataire(destinataire);
+        if (zone != null) {
+            colis.setZone(zone);
         }
 
         colis = colisRepository.save(colis);
 
-        // Créer le premier historique
         createHistorique(colis, StatutColis.CREE, "Colis créé", null);
 
         log.info("Colis créé avec succès, id: {}", colis.getId());
@@ -191,6 +199,12 @@ public class ColisService {
 
         Colis colis = findColisById(colisId);
 
+        if (!canModifyProducts(colis.getStatut())) {
+            throw new IllegalStateException(
+                    "Impossible d'ajouter des produits au colis avec le statut: " + colis.getStatut().getLibelle()
+            );
+        }
+
         ColisProduit colisProduit = new ColisProduit();
         colisProduit.setColis(colis);
         colisProduit.setProduit(produitRepository.findById(request.getProduitId())
@@ -206,7 +220,22 @@ public class ColisService {
     @Transactional
     public void removeProduitFromColis(String colisProduitId) {
         log.info("Suppression d'un produit du colis: {}", colisProduitId);
+
+        ColisProduit colisProduit = colisProduitRepository.findById(colisProduitId)
+                .orElseThrow(() -> new ResourceNotFoundException("Produit du colis non trouvé"));
+
+        if (!canModifyProducts(colisProduit.getColis().getStatut())) {
+            throw new IllegalStateException(
+                    "Impossible de supprimer des produits du colis avec le statut: " +
+                            colisProduit.getColis().getStatut().getLibelle()
+            );
+        }
+
         colisProduitRepository.deleteById(colisProduitId);
+    }
+
+    private boolean canModifyProducts(StatutColis statut) {
+        return statut == StatutColis.CREE || statut == StatutColis.EN_STOCK;
     }
 
     // Statistiques
@@ -272,4 +301,8 @@ public class ColisService {
         }
         return stats;
     }
+
+
+
+
 }
